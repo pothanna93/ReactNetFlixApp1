@@ -1,0 +1,18 @@
+.footer-container {
+  border: 1px solid red;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+.icon {
+  font-size: 18px;
+  margin: 10px;
+  color: #fff;
+}
+.contact-us {
+  color: #fff;
+  margin: 0px;
+  padding: 0px;
+}

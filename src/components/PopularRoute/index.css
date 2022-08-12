@@ -1,0 +1,33 @@
+.popular-container {
+  border: 1px solid red;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  background-color: #131313;
+}
+.popular-responsive-container {
+  border: 2px solid green;
+}
+.popular-list-items {
+  border: 1px solid wheat;
+  list-style-type: none;
+  padding-left: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.popular-img {
+  width: 90px;
+  height: 100px;
+  border-radius: 8px;
+}
+@media screen and (min-width: 768px) {
+  .popular-img {
+    width: 280px;
+    height: 180px;
+  }
+}
+.list-item-popular {
+  margin: 8px;
+}

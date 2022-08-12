@@ -1,0 +1,21 @@
+.trending-container {
+  border: 2px solid red;
+  display: flex;
+}
+.trend-slide-container {
+  border: 2px solid green;
+  width: 100%;
+}
+.trend-slide-image-container {
+  padding: 10px;
+}
+.trend-image {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+}
+.trend-fail-div {
+  border: 2px solid purple;
+  width: 100%;
+  height: 200px;
+}
