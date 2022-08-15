@@ -20,15 +20,15 @@ const apiStatusConstants = {
 
 class HomeRoute extends Component {
   state = {
-    originalsList: [],
+    posterItemLists: [],
     apiStatus: apiStatusConstants.initial,
   }
 
   componentDidMount() {
-    this.getOriginals()
+    this.getHomePoster()
   }
 
-  getOriginals = async () => {
+  getHomePoster = async () => {
     this.setState({apiStatus: apiStatusConstants.inProgress})
 
     const jwtToken = Cookies.get('jwt_token')
@@ -55,7 +55,7 @@ class HomeRoute extends Component {
         posterPath: randomPoster.poster_path,
       }
       this.setState({
-        originalsList: {...updatedData},
+        posterItemLists: {...updatedData},
         apiStatus: apiStatusConstants.success,
       })
     } else {
@@ -66,7 +66,7 @@ class HomeRoute extends Component {
   }
 
   onRetry = () => {
-    this.getOriginals()
+    this.getHomePoster()
   }
 
   renderFailureView = () => (
@@ -76,23 +76,17 @@ class HomeRoute extends Component {
   )
 
   renderLoadingView = () => (
-    <div className="loader-container">
-      <Loader
-        testid="loader"
-        type="TailSpin"
-        height={35}
-        width={380}
-        color=" #D81F26"
-      />
+    <div className="loader-container" testid="loader">
+      <Loader type="TailSpin" color="#D81F26" height={50} width={50} />
     </div>
   )
 
   renderSuccessView = () => {
-    const {originalsList} = this.state
+    const {posterItemLists} = this.state
 
     return (
       <div className="home-poster-div">
-        <HomePoster posterDetails={originalsList} />
+        <HomePoster posterDetails={posterItemLists} />
       </div>
     )
   }

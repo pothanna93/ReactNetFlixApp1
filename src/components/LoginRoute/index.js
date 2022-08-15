@@ -17,8 +17,8 @@ class LoginRoute extends Component {
     Cookies.set('jwt_token', jwtToken, {expires: 30})
     history.replace('/')
     const {username, password} = this.state
-    localStorage.setItem('username', username)
-    localStorage.setItem('password', password)
+    localStorage.setItem('username', username, {secure: true, sameSite: 'none'})
+    localStorage.setItem('password', password, {secure: true, sameSite: 'none'})
   }
 
   onFailureSubmit = errorMsg => {

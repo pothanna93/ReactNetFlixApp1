@@ -19,9 +19,6 @@ class MovieItemDetails extends Component {
   state = {
     apiStatus: apiStatusConstants.initial,
     movieDetails: [],
-    genres: [],
-    spokenLanguages: [],
-    similarMovies: [],
   }
 
   componentDidMount() {
@@ -45,44 +42,37 @@ class MovieItemDetails extends Component {
     if (response.ok === true) {
       const data = await response.json()
 
-      const updatedData = [data.movie_details].map(each => ({
-        id: each.id,
-        backdropPath: each.backdrop_path,
-        budget: each.budget,
-        title: each.title,
-        overview: each.overview,
-        originalLanguage: each.original_language,
-        releaseDate: each.release_date,
-        count: each.vote_count,
-        rating: each.vote_average,
-        runtime: each.runtime,
-        posterPath: each.poster_path,
-      }))
-
-      const genresData = data.movie_details.genres.map(each => ({
-        id: each.id,
-        name: each.name,
-      }))
-
-      const updatedSimilarData = data.movie_details.similar_movies.map(
-        each => ({
-          id: each.id,
-          posterPath: each.poster_path,
-          title: each.title,
-        }),
-      )
-
-      const updatedLanguagesData = data.movie_details.spoken_languages.map(
-        each => ({
-          id: each.id,
-          language: each.english_name,
-        }),
-      )
+      const fetchedData = {
+        movieItems: {
+          adult: data.movie_details.adult,
+          backdropPath: data.movie_details.backdrop_path,
+          budget: data.movie_details.budget,
+          id: data.movie_details.id,
+          overview: data.movie_details.overview,
+          posterPath: data.movie_details.poster_path,
+          releaseDate: data.movie_details.release_date,
+          runtime: data.movie_details.runtime,
+          title: data.movie_details.title,
+          voteAverage: data.movie_details.vote_average,
+          voteCount: data.movie_details.vote_count,
+        },
+        genres: data.movie_details.genres.map(eachItem => ({
+          id: eachItem.id,
+          name: eachItem.name,
+        })),
+        similarMovies: data.movie_details.similar_movies.map(eachItem => ({
+          id: eachItem.id,
+          backdropPath: eachItem.backdrop_path,
+          posterPath: eachItem.poster_path,
+          title: eachItem.title,
+        })),
+        spokenLanguages: data.movie_details.spoken_languages.map(eachItem => ({
+          id: eachItem.id,
+          englishName: eachItem.english_name,
+        })),
+      }
       this.setState({
-        movieDetails: updatedData,
-        genres: genresData,
-        spokenLanguages: updatedLanguagesData,
-        similarMovies: updatedSimilarData.slice(0, 6),
+        movieDetails: fetchedData,
         apiStatus: apiStatusConstants.success,
       })
     } else {
@@ -91,15 +81,14 @@ class MovieItemDetails extends Component {
   }
 
   renderSuccessView = () => {
-    const {movieDetails, genres, spokenLanguages, similarMovies} = this.state
-    const newMovieDetails = {...movieDetails[0]}
-    const {releaseDate, count, rating, budget} = newMovieDetails
+    const {movieDetails} = this.state
+    const {similarMovies, spokenLanguages, genres, movieItems} = movieDetails
+    const {voteCount, voteAverage, budget, releaseDate} = movieItems
+
     return (
       <>
         <div className="poster-container">
-          {movieDetails.map(eachMovie => (
-            <MovieItem movieDetails={eachMovie} key={eachMovie.id} />
-          ))}
+          <MovieItem movieDetails={movieItems} />
         </div>
         <div className="movie-info-container">
           <div className="movie-items-div">
@@ -117,7 +106,7 @@ class MovieItemDetails extends Component {
             <ul className="movie-info-ul-container">
               {spokenLanguages.map(eachAudio => (
                 <li className="movie-list-item" key={eachAudio.id}>
-                  <p>{eachAudio.language}</p>
+                  <p>{eachAudio.englishName}</p>
                 </li>
               ))}
             </ul>
@@ -125,9 +114,9 @@ class MovieItemDetails extends Component {
 
           <div className="movie-items-div">
             <h1 className="movie-info-heading">Rating Count</h1>
-            <p className="movie-list-item">{count}</p>
+            <p className="movie-list-item">{voteCount}</p>
             <h1 className="movie-info-heading">Rating Average</h1>
-            <p className="movie-list-item">{rating}</p>
+            <p className="movie-list-item">{voteAverage}</p>
           </div>
           <div className="movie-items-div">
             <h1 className="movie-info-heading">Budget</h1>
@@ -139,7 +128,7 @@ class MovieItemDetails extends Component {
         <div className="movie-similar-container">
           <h1 className="more-like-this">More like this</h1>
           <ul className="similar-ul-container">
-            {similarMovies.map(each => (
+            {similarMovies.slice(0, 6).map(each => (
               <Link to={`/movies/${each.id}`} key={each.id} target="blank">
                 <li className="similar-li-item" key={each.id}>
                   <img

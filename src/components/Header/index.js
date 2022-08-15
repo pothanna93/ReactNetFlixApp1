@@ -59,7 +59,7 @@ class Header extends Component {
 
   render() {
     const {showMenu, showSearchBar} = this.state
-    console.log(showSearchBar)
+
     const jwtToken = Cookies.get('jwt_token')
     if (jwtToken === undefined) {
       return <Redirect to="/login" />
