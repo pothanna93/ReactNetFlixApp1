@@ -129,7 +129,7 @@ class MovieItemDetails extends Component {
           <h1 className="more-like-this">More like this</h1>
           <ul className="similar-ul-container">
             {similarMovies.slice(0, 6).map(each => (
-              <Link to={`/movies/${each.id}`} key={each.id} target="blank">
+              <Link to={`/movies/${each.id}`} key={each.id}>
                 <li className="similar-li-item" key={each.id}>
                   <img
                     className="movie-popular-poster"

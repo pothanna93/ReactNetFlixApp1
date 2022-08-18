@@ -111,15 +111,13 @@ class PopularRoute extends Component {
 
   render() {
     return (
-      <>
-        <div className="popular-container">
-          <Header />
-          <div className="popular-responsive-container">
-            {this.renderAll()}
-            <FooterRoute />
-          </div>
+      <div className="popular-container">
+        <Header />
+        <div className="popular-responsive-container">
+          {this.renderAll()}
+          <FooterRoute />
         </div>
-      </>
+      </div>
     )
   }
 }

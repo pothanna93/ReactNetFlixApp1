@@ -1,8 +1,7 @@
 import {Component} from 'react'
-import {Link, Redirect, withRouter} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {ImCross} from 'react-icons/im'
 import {HiOutlineSearch} from 'react-icons/hi'
-import Cookies from 'js-cookie'
 
 import './index.css'
 
@@ -59,11 +58,6 @@ class Header extends Component {
 
   render() {
     const {showMenu, showSearchBar} = this.state
-
-    const jwtToken = Cookies.get('jwt_token')
-    if (jwtToken === undefined) {
-      return <Redirect to="/login" />
-    }
 
     return (
       <nav className="nav-container">
@@ -154,7 +148,6 @@ class Header extends Component {
                 className="menu-btn"
                 type="button"
                 onClick={this.onClickHideMenu}
-                testid="searchButton"
               >
                 <ImCross className="list-item" />
               </button>
@@ -165,4 +158,4 @@ class Header extends Component {
     )
   }
 }
-export default withRouter(Header)
+export default Header

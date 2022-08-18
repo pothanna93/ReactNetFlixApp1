@@ -1,6 +1,7 @@
 .nav-container {
   border: 1px solid red;
   background-color: transparent;
+  background-color: black;
 }
 
 .nav-responsive-container {
@@ -122,5 +123,5 @@
 /*------test----*/
 
 .home {
-  color: blue;
+  border: 2px solid blue;
 }

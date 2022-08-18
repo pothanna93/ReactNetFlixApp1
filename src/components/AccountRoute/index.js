@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie'
+
 import FooterRoute from '../FooterRoute'
 import Header from '../Header'
 import './index.css'
@@ -8,6 +9,7 @@ const AccountRoute = props => {
   const password = localStorage.getItem('password')
 
   const passwordInAsterisk = '*'.repeat(password.length)
+
   const onClickLogout = () => {
     const {history} = props
     Cookies.remove('jwt_token')

@@ -1,6 +1,7 @@
 import {Component} from 'react'
 
 import Cookies from 'js-cookie'
+import {HiOutlineSearch} from 'react-icons/hi'
 
 import Loader from 'react-loader-spinner'
 import {Link} from 'react-router-dom'
@@ -71,6 +72,7 @@ class SearchRoute extends Component {
 
   renderNoSearchFound = () => {
     const {searchInput} = this.state
+
     return (
       <div className="no-search-container">
         <img
@@ -148,6 +150,7 @@ class SearchRoute extends Component {
 
   render() {
     const {searchInput} = this.state
+    console.log(searchInput)
 
     return (
       <>

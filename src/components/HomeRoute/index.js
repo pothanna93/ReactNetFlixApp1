@@ -20,15 +20,15 @@ const apiStatusConstants = {
 
 class HomeRoute extends Component {
   state = {
-    posterItemLists: [],
+    originalLists: [],
     apiStatus: apiStatusConstants.initial,
   }
 
   componentDidMount() {
-    this.getHomePoster()
+    this.getOriginals()
   }
 
-  getHomePoster = async () => {
+  getOriginals = async () => {
     this.setState({apiStatus: apiStatusConstants.inProgress})
 
     const jwtToken = Cookies.get('jwt_token')
@@ -43,19 +43,15 @@ class HomeRoute extends Component {
     const response = await fetch(originalsUrl, options)
     if (response.ok === true) {
       const data = await response.json()
-      const fetchedDataLength = data.results.length
-      const randomPoster =
-        data.results[Math.floor(Math.random() * fetchedDataLength)]
-
-      const updatedData = {
-        id: randomPoster.id,
-        backdropPath: randomPoster.backdrop_path,
-        title: randomPoster.title,
-        overview: randomPoster.overview,
-        posterPath: randomPoster.poster_path,
-      }
+      const fetchedData = data.results.map(eachItem => ({
+        backdropPath: eachItem.backdrop_path,
+        posterPath: eachItem.poster_path,
+        id: eachItem.id,
+        overview: eachItem.overview,
+        title: eachItem.title,
+      }))
       this.setState({
-        posterItemLists: {...updatedData},
+        originalLists: fetchedData,
         apiStatus: apiStatusConstants.success,
       })
     } else {
@@ -66,7 +62,7 @@ class HomeRoute extends Component {
   }
 
   onRetry = () => {
-    this.getHomePoster()
+    this.getOriginals()
   }
 
   renderFailureView = () => (
@@ -82,11 +78,13 @@ class HomeRoute extends Component {
   )
 
   renderSuccessView = () => {
-    const {posterItemLists} = this.state
+    const {originalLists} = this.state
+    const singleObj =
+      originalLists[Math.floor(Math.random() * originalLists.length)]
 
     return (
       <div className="home-poster-div">
-        <HomePoster posterDetails={posterItemLists} />
+        <HomePoster posterDetails={singleObj} />
       </div>
     )
   }
@@ -108,20 +106,18 @@ class HomeRoute extends Component {
 
   render() {
     return (
-      <>
-        <div className="home-app-container">
-          {this.renderAll()}
-          <div className="home-responsive-container">
-            <h1 className="slide-title">Trending Now</h1>
+      <div className="home-app-container">
+        {this.renderAll()}
+        <div className="home-responsive-container">
+          <h1 className="slide-title">Trending Now</h1>
 
-            <TrendingRoute />
+          <TrendingRoute />
 
-            <h1 className="slide-title">Originals</h1>
-            <OriginalRoute />
-            <FooterRoute />
-          </div>
+          <h1 className="slide-title">Originals</h1>
+          <OriginalRoute />
+          <FooterRoute />
         </div>
-      </>
+      </div>
     )
   }
 }
