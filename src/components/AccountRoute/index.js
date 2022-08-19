@@ -17,7 +17,7 @@ const AccountRoute = props => {
   }
 
   return (
-    <div className="account-container">
+    <div className="account-container" testid="account">
       <Header />
       <div className="account-resp-div">
         <h1>Account</h1>

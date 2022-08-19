@@ -1,12 +1,12 @@
 import {Component} from 'react'
-import {Link} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
-import FailureView from '../FailureView'
+import {Link} from 'react-router-dom'
+import FooterRoute from '../FooterRoute'
 import Header from '../Header'
+import FailureView from '../FailureView'
 
 import './index.css'
-import FooterRoute from '../FooterRoute'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -17,62 +17,58 @@ const apiStatusConstants = {
 
 class PopularRoute extends Component {
   state = {
-    popularList: [],
     apiStatus: apiStatusConstants.initial,
+    popularLists: [],
   }
 
   componentDidMount() {
-    this.getPopularVideos()
+    this.getPopularItems()
   }
 
-  getPopularVideos = async () => {
+  getPopularItems = async () => {
     this.setState({apiStatus: apiStatusConstants.inProgress})
-
     const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = 'https://apis.ccbp.in/movies-app/popular-movies'
-
+    const popularUrl = `https://apis.ccbp.in/movies-app/popular-movies`
     const options = {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
     }
-    const response = await fetch(apiUrl, options)
+    const response = await fetch(popularUrl, options)
     if (response.ok === true) {
       const data = await response.json()
 
       const fetchedData = data.results.map(eachItem => ({
         id: eachItem.id,
         backdropPath: eachItem.backdrop_path,
-        posterPath: eachItem.poster_path,
         title: eachItem.title,
+        posterPath: eachItem.poster_path,
       }))
       this.setState({
-        popularList: fetchedData,
+        popularLists: fetchedData,
         apiStatus: apiStatusConstants.success,
       })
     } else {
-      this.setState({
-        apiStatus: apiStatusConstants.failure,
-      })
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
 
-  renderSuccessView = () => {
-    const {popularList} = this.state
+  renderPopularSuccessView = () => {
+    const {popularLists} = this.state
     return (
-      <div>
-        <ul className="popular-list-items">
-          {popularList.map(eachItem => (
-            <Link to={`/movies/${eachItem.id}`} key={eachItem.id}>
-              <li key={eachItem.id} className="list-item-popular">
+      <div className="popular-success-div">
+        <ul className="popular-ul-list">
+          {popularLists.map(eachMovie => (
+            <li key={eachMovie.id} className="popular-list-item">
+              <Link to={`/movies/${eachMovie.id}`} key={eachMovie.id}>
                 <img
-                  src={eachItem.posterPath}
-                  alt={eachItem.title}
-                  className="popular-img"
+                  src={eachMovie.posterPath}
+                  alt={eachMovie.title}
+                  className="popular-poster"
                 />
-              </li>
-            </Link>
+              </Link>
+            </li>
           ))}
         </ul>
       </div>
@@ -80,11 +76,11 @@ class PopularRoute extends Component {
   }
 
   onRetry = () => {
-    this.getPopularVideos()
+    this.getPopularItems()
   }
 
   renderFailureView = () => (
-    <div className="original-fail-container">
+    <div className="popular-fail-div">
       <FailureView onRetry={this.onRetry} />
     </div>
   )
@@ -95,15 +91,16 @@ class PopularRoute extends Component {
     </div>
   )
 
-  renderAll = () => {
+  renderPopularView = () => {
     const {apiStatus} = this.state
     switch (apiStatus) {
       case apiStatusConstants.success:
-        return this.renderSuccessView()
+        return this.renderPopularSuccessView()
       case apiStatusConstants.failure:
         return this.renderFailureView()
       case apiStatusConstants.inProgress:
         return this.renderLoadingView()
+
       default:
         return null
     }
@@ -111,10 +108,10 @@ class PopularRoute extends Component {
 
   render() {
     return (
-      <div className="popular-container">
+      <div className="popular-container" testid="popular">
         <Header />
-        <div className="popular-responsive-container">
-          {this.renderAll()}
+        <div className="popular-responsive-div">
+          {this.renderPopularView()}
           <FooterRoute />
         </div>
       </div>

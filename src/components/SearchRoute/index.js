@@ -1,13 +1,10 @@
 import {Component} from 'react'
-
 import Cookies from 'js-cookie'
-import {HiOutlineSearch} from 'react-icons/hi'
-
 import Loader from 'react-loader-spinner'
+import {HiOutlineSearch} from 'react-icons/hi'
 import {Link} from 'react-router-dom'
-import Header from '../Header'
 
-import FailureView from '../FailureView'
+import Header from '../Header'
 
 import './index.css'
 
@@ -21,58 +18,64 @@ const apiStatusConstants = {
 class SearchRoute extends Component {
   state = {
     apiStatus: apiStatusConstants.initial,
-    searchMovies: [],
+    searchList: [],
     searchInput: '',
   }
 
-  onClickSearch = async () => {
+  getSearchMovies = async () => {
     this.setState({apiStatus: apiStatusConstants.inProgress})
+    const jwtToken = Cookies.get('jwt_token')
     const {searchInput} = this.state
 
-    const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = `https://apis.ccbp.in/movies-app/movies-search?search=${searchInput}`
-
+    const searchUrl = `https://apis.ccbp.in/movies-app/movies-search?search=${searchInput}`
     const options = {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
     }
-    const response = await fetch(apiUrl, options)
-
+    const response = await fetch(searchUrl, options)
     if (response.ok === true) {
       const data = await response.json()
-      const updatedData = data.results.map(each => ({
-        posterPath: each.poster_path,
-        title: each.title,
-        id: each.id,
-        backdropPath: each.backdrop_path,
+
+      const fetchedData = data.results.map(eachItem => ({
+        id: eachItem.id,
+        backdropPath: eachItem.backdrop_path,
+        title: eachItem.title,
+        posterPath: eachItem.poster_path,
       }))
       this.setState({
-        searchMovies: updatedData,
+        searchList: fetchedData,
         apiStatus: apiStatusConstants.success,
       })
     } else {
-      this.setState({
-        apiStatus: apiStatusConstants.failure,
-      })
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
 
-  enterSearchInput = () => {
-    const {searchInput} = this.state
-    if (searchInput.length !== 0) {
-      this.onClickSearch()
-    }
+  onClickTryAgain = () => {
+    this.getSearchMovies()
   }
 
-  changeSearchInput = text => {
-    this.setState({searchInput: text})
-  }
+  renderFailureView = () => (
+    <div className="search-failure-div">
+      <img
+        className="search-failed-image"
+        src="https://res.cloudinary.com/dyx9u0bif/image/upload/v1657426934/homepage-failure_egb8fl.png"
+        alt="failure view"
+      />
+
+      <h1 className="try-description">
+        Something went wrong. Please try again
+      </h1>
+      <button type="button" className="try-btn" onClick={this.onClickTryAgain}>
+        Try Again
+      </button>
+    </div>
+  )
 
   renderNoSearchFound = () => {
     const {searchInput} = this.state
-
     return (
       <div className="no-search-container">
         <img
@@ -87,22 +90,21 @@ class SearchRoute extends Component {
     )
   }
 
-  renderResultView = () => {
-    const {searchMovies} = this.state
-
+  renderSearchResults = () => {
+    const {searchList} = this.state
     return (
-      <div className="search-filter-container">
-        <ul className="search-filter-ul-container">
-          {searchMovies.map(each => (
-            <Link to={`/movies/${each.id}`} key={each.id}>
-              <li className="search-filter-li-item" key={each.id}>
+      <div className="search-result-div">
+        <ul className="search-ul-lists">
+          {searchList.map(eachItem => (
+            <li key={eachItem.id} className="search-list-item">
+              <Link to={`/movies/${eachItem.id}`} key={eachItem.id}>
                 <img
+                  src={eachItem.posterPath}
+                  alt={eachItem.title}
                   className="search-poster"
-                  src={each.posterPath}
-                  alt={each.title}
                 />
-              </li>
-            </Link>
+              </Link>
+            </li>
           ))}
         </ul>
       </div>
@@ -110,23 +112,14 @@ class SearchRoute extends Component {
   }
 
   renderSuccessView = () => {
-    const {searchMovies} = this.state
-    const searchLength = searchMovies.length > 0
-
+    const {searchList} = this.state
+    const lengthOfList = searchList.length > 0
     return (
-      <>{searchLength ? this.renderResultView() : this.renderNoSearchFound()}</>
+      <>
+        {lengthOfList ? this.renderSearchResults() : this.renderNoSearchFound()}
+      </>
     )
   }
-
-  onRetry = () => {
-    this.onClickSearch()
-  }
-
-  renderFailureView = () => (
-    <div className="search-fail-container">
-      <FailureView onRetry={this.onRetry} />
-    </div>
-  )
 
   renderLoadingView = () => (
     <div className="loader-container" testid="loader">
@@ -134,7 +127,41 @@ class SearchRoute extends Component {
     </div>
   )
 
-  renderAll = () => {
+  onEnterSearchInput = () => {
+    const {searchInput} = this.state
+    if (searchInput !== '') {
+      this.getSearchMovies()
+    }
+  }
+
+  onChangeSearchInput = event => {
+    this.setState({searchInput: event.target.value})
+  }
+
+  renderSearchBar = () => {
+    const {searchInput} = this.state
+
+    return (
+      <div className="search-container-div">
+        <input
+          type="search"
+          className="input-element"
+          onChange={this.onChangeSearchInput}
+          value={searchInput}
+        />
+        <button
+          type="button"
+          onClick={this.onEnterSearchInput}
+          className="search-btn"
+          testid="searchButton"
+        >
+          <HiOutlineSearch className="search-Hi-icon" />
+        </button>
+      </div>
+    )
+  }
+
+  renderSearchView = () => {
     const {apiStatus} = this.state
     switch (apiStatus) {
       case apiStatusConstants.success:
@@ -143,26 +170,19 @@ class SearchRoute extends Component {
         return this.renderFailureView()
       case apiStatusConstants.inProgress:
         return this.renderLoadingView()
+
       default:
         return null
     }
   }
 
   render() {
-    const {searchInput} = this.state
-    console.log(searchInput)
-
     return (
-      <>
-        <div className="search-container">
-          <Header
-            searchInput={searchInput}
-            enterSearchInput={this.enterSearchInput}
-            changeSearchInput={this.changeSearchInput}
-          />
-          <div className="search-responsive-div">{this.renderAll()}</div>
-        </div>
-      </>
+      <div className="search-container" testid="search">
+        <Header />
+        {this.renderSearchBar()}
+        <div className="search-responsive-div">{this.renderSearchView()}</div>
+      </div>
     )
   }
 }

@@ -57,35 +57,6 @@
   border: none;
   outline: none;
 }
-/*search info*/
-.search-container-div {
-  border: 2px solid #ffffff;
-  display: flex;
-  border-radius: 10px;
-  align-items: center;
-  height: 40px;
-}
-.search-icon {
-  width: 50px;
-  padding: 10px;
-  background-color: #181818;
-  height: 36px;
-  border-bottom-right-radius: 8px;
-  border-top-right-radius: 8px;
-}
-.input-element {
-  border: none;
-  outline: none;
-  margin-left: 5px;
-  background-color: transparent;
-  color: #ffffff;
-  padding: 8px;
-  width: 120px;
-}
-.search-Hi-icon {
-  color: #ffffff;
-  font-size: 20px;
-}
 
 /*large screen*/
 .large-screen-container {

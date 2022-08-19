@@ -8,11 +8,6 @@ import './index.css'
 class Header extends Component {
   state = {
     showMenu: false,
-    showSearchBar: false,
-  }
-
-  onClickShowSearchBar = () => {
-    this.setState({showSearchBar: true})
   }
 
   onClickShowMenu = () => {
@@ -23,41 +18,8 @@ class Header extends Component {
     this.setState({showMenu: false})
   }
 
-  onEnterSearchInput = () => {
-    const {enterSearchInput} = this.props
-    enterSearchInput()
-  }
-
-  onChangeSearchInput = event => {
-    const {changeSearchInput} = this.props
-    changeSearchInput(event.target.value)
-  }
-
-  renderSearchInput = () => {
-    const {searchInput} = this.props
-
-    return (
-      <div className="search-container-div">
-        <input
-          type="search"
-          className="input-element"
-          onChange={this.onChangeSearchInput}
-          value={searchInput}
-        />
-        <button
-          type="button"
-          onClick={this.onEnterSearchInput}
-          className="menu-btn"
-          testid="searchButton"
-        >
-          <HiOutlineSearch className="search-Hi-icon" />
-        </button>
-      </div>
-    )
-  }
-
   render() {
-    const {showMenu, showSearchBar} = this.state
+    const {showMenu} = this.state
 
     return (
       <nav className="nav-container">
@@ -79,20 +41,16 @@ class Header extends Component {
               </Link>
             </ul>
             <div className="profile-and-search-div">
-              {showSearchBar ? (
-                this.renderSearchInput()
-              ) : (
-                <Link to="/search">
-                  <button
-                    type="button"
-                    className="menu-btn"
-                    testid="searchButton"
-                    onClick={this.onClickShowSearchBar}
-                  >
-                    <HiOutlineSearch className="search-Hi-icon" />
-                  </button>
-                </Link>
-              )}
+              <Link to="/search">
+                <button
+                  type="button"
+                  className="menu-btn"
+                  testid="searchButton"
+                >
+                  <HiOutlineSearch className="search-Hi-icon" />
+                </button>
+              </Link>
+
               <Link to="/account">
                 <img
                   src="https://res.cloudinary.com/dtvpdvwm9/image/upload/v1659950732/Avatar_qqrscp.png"
@@ -104,20 +62,11 @@ class Header extends Component {
           </div>
 
           <div className="nav-mobile-container">
-            {showSearchBar ? (
-              this.renderSearchInput()
-            ) : (
-              <Link to="/search">
-                <button
-                  type="button"
-                  className="menu-btn"
-                  testid="searchButton"
-                  onClick={this.onClickShowSearchBar}
-                >
-                  <HiOutlineSearch className="search-Hi-icon" />
-                </button>
-              </Link>
-            )}
+            <Link to="/search">
+              <button type="button" className="menu-btn" testid="searchButton">
+                <HiOutlineSearch className="search-Hi-icon" />
+              </button>
+            </Link>
 
             <button
               type="button"
